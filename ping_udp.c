@@ -24,6 +24,8 @@ int main(int argc, char * argv[])
     const char *cause = NULL;
 
     int s, error;
+    
+    float ping, ping_min, ping_max, ping_avg;
 
     struct timeval tv_tmp;
     struct timeval timestamp_send;
@@ -63,16 +65,35 @@ int main(int argc, char * argv[])
         break;
     }
 
-    sendto(s, send_data,8, 0,res->ai_addr, res->ai_addrlen);
-    gettimeofday(&timestamp_send,NULL);
+    ping = 0; ping_min = 0; ping_max = 0; ping_avg = 0;
+    for(int i=0; iargv[3]; i++)
+    {
+        sendto(s, send_data,8, 0,res->ai_addr, res->ai_addrlen);
+        gettimeofday(&timestamp_send,NULL);
 
-    recv_data_len = recvfrom(s,send_data,8,0,res->ai_addr, &res->ai_addrlen);
+        recv_data_len = recvfrom(s,send_data,8,0,res->ai_addr, &res->ai_addrlen);
 
-    while(recv_data_len==0){}
+        while(recv_data_len==0){}
+        gettimeofday(&timestamp_return,NULL);
 
-    gettimeofday(&timestamp_return,NULL);
-
-    timersub(&timestamp_return, &timestamp_send, &tv_tmp);
-    printf("Latency = %ld.%ld s\n",tv_tmp.tv_sec,tv_tmp.tv_usec);
+        timersub(&timestamp_return, &timestamp_send, &tv_tmp);
+        ping = (float)(tv_tmp.tv_sec/1000)+(float)(tv_tmp.tv_usec*1000);
+        
+        if(ping<ping_min)
+        {
+            ping_min = ping;
+        }
+        if(ping>ping_max)
+        {
+            ping_max = ping;
+        }
+        ping_avg = ping_avg+ping;
+        
+        printf("8 bytes from %s, %s: udp_seq=%d  time=%f ms\n",argv[1],argv[2],i+1,ping);
+    }
+    
+    ping_avg=ping_avg/argv[3];
+    printf("--- %s ping_udp statistics ---",argv[1]);
+    printf("rtt min/avg/max = %d",ping_min,ping_max,ping_avg);
 }
 
