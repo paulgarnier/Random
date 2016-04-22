@@ -79,7 +79,7 @@ int main(int argc, char * argv[])
         gettimeofday(&timestamp_return,NULL);
 
         timersub(&timestamp_return, &timestamp_send, &tv_tmp);
-        ping = (float)(tv_tmp.tv_sec*1000)+(float)(tv_tmp.tv_usec/1000);
+        ping = ((float)tv_tmp.tv_sec)*1000+((float)tv_tmp.tv_usec)/1000;
 
         if(ping<ping_min || ping_min==0)
         {
