@@ -72,8 +72,6 @@ int main(int argc, char * argv[])
 
     gettimeofday(&timestamp_return,NULL);
 
-printf("Size of packet received : %d\n",recv_data_len);
-
     timersub(&timestamp_return, &timestamp_send, &tv_tmp);
     printf("Latency = %ld.%ld s\n",tv_tmp.tv_sec,tv_tmp.tv_usec);
 }
