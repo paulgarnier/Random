@@ -49,11 +49,9 @@ int main(int argc, char * argv[])
         int send_data[8];
         int recv_data_len=0;
 
-if(f==1){ printf("Avant scanf : %s",tab_addr_in[0]);}
-
         printf("IP or hostname %d : \n",f);
         scanf("%s",tab_addr_in[f]);
-if(f==1){ printf("Apres scanf : %s",tab_addr_in[0]);}
+
         printf("Port %d : \n",f);
         scanf("%s",tab_port[f]);
 
@@ -77,9 +75,9 @@ if(f==1){ printf("Apres scanf : %s",tab_addr_in[0]);}
             s = socket(res->ai_family, res->ai_socktype, 0);
             break;
         }
-printf("Apres socket : %s\n",tab_addr_in[f]);
+
         pck = 3;
-        ping = 0; ping_min = 0; ping_max = 0; ping_avg = 0;
+        ping = 0; ping_avg = 0;
     
         for(int i=0; i<pck; i++)
         {
@@ -94,14 +92,6 @@ printf("Apres socket : %s\n",tab_addr_in[f]);
             timersub(&timestamp_return, &timestamp_send, &tv_tmp);
             ping = ((float)tv_tmp.tv_sec)*1000+((float)tv_tmp.tv_usec)/1000;
     
-            if(ping<ping_min || ping_min==0)
-            {
-                ping_min = ping;
-            }
-            if(ping>ping_max)
-            {
-                ping_max = ping;
-            }
             ping_avg = ping_avg+ping;
         }
         
@@ -109,10 +99,6 @@ printf("Apres socket : %s\n",tab_addr_in[f]);
         tab_unsorted[f]=ping_avg;
         tab_sorted[f]=ping_avg;
         printf("Ping avg:%f\n",ping_avg);
-
-        printf("IP :%s\n",tab_addr_in[0]);
-        printf("Port :%s\n",tab_port[0]);
-
     }
 
     float value = 0.0f;
@@ -129,20 +115,14 @@ printf("Apres socket : %s\n",tab_addr_in[f]);
         }
     }
 
-
-
-    for(int n=0;n<size;n++){printf("Ping n°%d: %f\n",n,tab_sorted[n]);}
-
     for(int j=0; j<size; j++)
-    {printf("J: %d\n",j);
+    {
         for(int k=0; k<size; k++)
-        {printf("K: %d\n",k);
+        {
             if(tab_sorted[j]==tab_unsorted[k])
-            {printf("OK\n");
+            {
                strcpy(tab_addr_out[j],tab_addr_in[k]);
-printf("tab_addr_in : %s\n",tab_addr_in[k]);
                strcpy(tab_port_out[j],tab_port[k]);
-printf("tab_port : %s\n",tab_port[k]);
             }
         }
     }
